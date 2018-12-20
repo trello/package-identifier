@@ -11,6 +11,7 @@ dependencies {
     implementation deps.android.gradlePlugin
     implementation deps.kotlin.stdlib
     implementation deps.kotlinpoet
+    implementation 'junit:junit:4.12'
 }
 
 sourceCompatibility = "1.7"

@@ -20,6 +20,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
 import org.slf4j.LoggerFactory
+import java.io.File
+import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
 
@@ -34,18 +36,18 @@ class PackageIdentifierPlugin : Plugin<Project> {
       when (it) {
         is FeaturePlugin -> {
           project.extensions[FeatureExtension::class].run {
-            configureSanitizationGeneration(project, featureVariants)
-            configureSanitizationGeneration(project, libraryVariants)
+            configurePackageIdentifierGeneration(project, featureVariants)
+            configurePackageIdentifierGeneration(project, libraryVariants)
           }
         }
         is LibraryPlugin -> {
           project.extensions[LibraryExtension::class].run {
-            configureSanitizationGeneration(project, libraryVariants)
+            configurePackageIdentifierGeneration(project, libraryVariants)
           }
         }
         is AppPlugin -> {
           project.extensions[AppExtension::class].run {
-            configureSanitizationGeneration(project, applicationVariants)
+            configurePackageIdentifierGeneration(project, applicationVariants)
           }
         }
       }
@@ -64,9 +66,10 @@ class PackageIdentifierPlugin : Plugin<Project> {
     return result.getProperty("@package").toString()
   }
 
-  private fun configureSanitizationGeneration(project: Project, variants: DomainObjectSet<out BaseVariant>) {
+  private fun configurePackageIdentifierGeneration(project: Project, variants: DomainObjectSet<out BaseVariant>) {
     val implDeps = project.configurations.getByName("implementation").dependencies
     implDeps.add(project.dependencies.create("com.trello:package-identifier-annotations:$VERSION"))
+    val compiler: PackageIdentifierCompiler = RealPackageIdentifierCompiler()
     variants.all { variant ->
       val once = AtomicBoolean()
 
@@ -78,26 +81,15 @@ class PackageIdentifierPlugin : Plugin<Project> {
         task.outputs.dir(outputDir)
         variant.registerJavaGeneratingTask(task, outputDir)
         variant.addJavaSourceFoldersToModel(outputDir)
-        task.apply {
-          doLast {
-            val pId = AnnotationSpec.builder(PackageId::class)
-                .apply { addMember("isDebug = %L", variant.buildType.isDebuggable) }
-                .build()
-            val id = TypeSpec.classBuilder(ClassName(packageName, "PackageIdentifier"))
-                .addModifiers(KModifier.PUBLIC)
-                .addAnnotation(pId)
-                .build()
-
-            val file = FileSpec.builder(packageName, "PackageIdentifier")
-                .addType(id)
-                .addComment("Generated, do not modify!")
-                .build()
-            file.writeTo(outputDir)
-          }
+        if (!outputDir.exists()) {
+          outputDir.parentFile.mkdirs()
+          outputDir.createNewFile()
         }
+        task.apply { doLast { compiler.createPackageIdentifierFile(packageName, outputDir.writer(), variant.buildType.isDebuggable) } }
       }
     }
   }
+
 }
 
 private operator fun <T : Any> ExtensionContainer.get(type: KClass<T>): T {
