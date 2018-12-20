@@ -21,7 +21,7 @@ buildscript {
         'kotlinx': [
             'metadataJvm':"org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.0.4"
         ],
-        'kotlinpoet': 'com.squareup:kotlinpoet:0.7.0'
+        'kotlinpoet': 'com.squareup:kotlinpoet:1.0.0'
     ]
 
     repositories {
