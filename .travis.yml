@@ -11,9 +11,9 @@ before_install:
 
 install: ./gradlew build
 
-script: .buildscript/deploy_snapshot.sh ":package-identifier-annotations:publish :package-identifier-plugin:publish"
+#script: .buildscript/deploy_snapshot.sh ":package-identifier-annotations:publish :package-identifier-plugin:publish"
 
-after_success: .buildscript/deploy_snapshot.sh uploadArchives
+#after_success: .buildscript/deploy_snapshot.sh uploadArchives
 
 branches:
   except:
