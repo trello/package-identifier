@@ -1,9 +1,6 @@
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 
-group artifactGroup
-version artifactVersion
-
 dependencies {
     compileOnly gradleApi()
     implementation project(':package-identifier-annotations')
@@ -37,3 +34,4 @@ val VERSION = "${project.version}"
 }
 
 tasks.getByName('compileKotlin').dependsOn('pluginVersion')
+apply from: "$rootDir/gradle/gradle-mvn-push.gradle"

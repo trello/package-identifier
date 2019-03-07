@@ -1,8 +1,5 @@
 apply plugin: 'kotlin'
 
-group artifactGroup
-version artifactVersion
-
 repositories {
     mavenCentral()
 }
@@ -14,3 +11,4 @@ dependencies {
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
+apply from: "$rootDir/gradle/gradle-mvn-push.gradle"
