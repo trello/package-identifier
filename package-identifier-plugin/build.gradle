@@ -8,11 +8,11 @@ dependencies {
     implementation deps.android.gradlePlugin
     implementation deps.kotlin.stdlib
     implementation deps.kotlinpoet
-    implementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 sourceSets.main.java.srcDir "$buildDir/generated/source/package-identifier"
 
