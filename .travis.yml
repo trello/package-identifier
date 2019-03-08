@@ -3,22 +3,19 @@ language: java
 jdk:
 - oraclejdk8
 
-#before_install:
-# Install SDK license so Android Gradle plugin can install deps.
-#- mkdir "$ANDROID_HOME/licenses" || true
-#- echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > "$ANDROID_HOME/licenses/android-sdk-license"
-#- echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" >> "$ANDROID_HOME/licenses/android-sdk-license"
+install: "./gradlew assemble"
 
-install: ./gradlew assemble
+script: .buildscript/deploy_snapshot.sh ":package-identifier-annotations:publish :package-identifier-plugin:publish"
 
-#script: .buildscript/deploy_snapshot.sh ":package-identifier-annotations:publish :package-identifier-plugin:publish"
-
-#after_success: .buildscript/deploy_snapshot.sh uploadArchives
+after_success: .buildscript/deploy_snapshot.sh uploadArchives
 
 branches:
   except:
   - gh-pages
-
 notifications:
   email: false
-  
+
+env:
+  global:
+    - secure: "uoYRDSrjd9HfsRL3QY9h5QmEnMl6LDOxDlmsWuhl1Dz4ymU2yRsnvsgBopr8o3ldm97uzmkUBxjhLXTmAS2RUiiw8L4VJEydZdzcsrsoMFJ9MzQgrIo6jA/kURvHhJUAcbngU5Yec+SFqVqddi0m2FQ44AULBtawpagqNgpB/+3V1bVJpZTg77nZrG6PI/Afdp54Yq3ld5q+QmJ2eJK9yLrU1Mtv9WoTrkn21urYd4IZ2hvENHP9gQKPng+UzgKUYS8NQB0gI25UV5QcWyHND6UB1lLUm7JTsDILWAVRNYRAdpN99lyT0d32P0c85p3GTCAQBoAvhQaS0fwccLp4+Ue0vch92qm9/SWzyinxZiqrUdE9Ll2rwV/qF5j6vnWBvYSkuWbU62L5C5DTlJBlh/KgF71FD3gyENp53rJD3/T/1PmrdRJ/Lw8dktXVylG/n2rN4+yXb3Chbgy+fDnYVxPsUBXaK/hlH5kLCzqu6GttS2Hv99RDasq39J60RuOTuqkKaQFbyDTSJfcyq8PIxeZ5AqhGDrmTc50I8R0OAjJk8PJTpdc/oEkaDTDRxInBZm2qcKOoV2Xdq361cLsNuX+yRmAD+F3G5lePQjnny8D7mBziKWXxZBvrar/y8YcOLA2Hr1whfi52tJtQWoWTTKjB7msY+jbo4tJia1HhDPQ="
+    - secure: "KOiHmL2mPJgZtOEE5ickurJSYasO9RlNK8rI6VG5Cam6/5LOQz3tqMNKzYiwzR+mws+g6YhrBh1GtCl3quAFZ5g985OSUsI+/ufknJq5NwxFg4QDYRvK9O63UpWQAwZREVt/SL6Podiaf/ODUEcypSL2FratOnebiCBL9IIQlR7g54YyJ0XdAQCaY2K+px3jVXYod6FQL7DrPa4HN6FH8Nde9CpCGPpXiwSnjWc+uF4Cqe7w4kxnDY9Bx9gYCyo3xtex/vxZRV67Z2+Zn+cCZESkNzOh3zQn9pvjsXSfvaTNuXykrjQFZYH7aAVdv4+QZI0fPGv2gLDLV5Fp6/52pDRW1/zPyCn6kuCZpakhKmyt8Hmk3jk3RcPBc4xw9r84JYtitZievf6ZovpnZimGlCCQGD7ppF9fJ3JRIQ6Ldy5Qi0+cf+cjEwMCQFFDn2wS+nikfC9fisk3bNWR+wtSnu5bUvLBW2iJl9c7NDPWXEnbL8cdRtSmtLk7aZGDjyYShQaRZ09rRI4PFEYzRJv8k9aicG5Pfv8CZpK0OFVUbK2Yrr5W+rNwpDd+q7laPvhUIOG74kVszzgkHAq1Bax0QBv5tDQGCkyXIVc98b6AF1PPCmZwFJWyMzFny9LYIh99r6/yb0i5sda1mDFj6xqxyELmiJW5GiX7wgDRI/q0zhc="
