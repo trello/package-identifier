@@ -85,7 +85,12 @@ class PackageIdentifierPlugin : Plugin<Project> {
           outputDir.parentFile.mkdirs()
           outputDir.createNewFile()
         }
-        task.apply { doLast { compiler.createPackageIdentifierFile(packageName, outputDir.writer(), variant.buildType.isDebuggable) } }
+
+        val outputFile = File(outputDir, "PackageIdentifier.kt")
+        if (!outputFile.exists()) {
+          outputFile.createNewFile()
+        }
+        task.apply { doLast { compiler.createPackageIdentifierFile(packageName, outputFile.writer(), variant.buildType.isDebuggable) } }
       }
     }
   }
