@@ -68,7 +68,7 @@ class PackageIdentifierPlugin : Plugin<Project> {
 
   private fun configurePackageIdentifierGeneration(project: Project, variants: DomainObjectSet<out BaseVariant>) {
     val implDeps = project.configurations.getByName("implementation").dependencies
-    implDeps.add(project.dependencies.create("com.trello:package-identifier-annotations:$VERSION"))
+    implDeps.add(project.dependencies.create("com.trello.identifier:package-identifier-annotations:$VERSION"))
     val compiler: PackageIdentifierCompiler = RealPackageIdentifierCompiler()
     variants.all { variant ->
       val once = AtomicBoolean()
