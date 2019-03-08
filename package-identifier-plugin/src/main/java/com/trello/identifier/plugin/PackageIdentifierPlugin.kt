@@ -7,21 +7,15 @@ import com.android.build.gradle.FeaturePlugin
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.api.BaseVariant
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.TypeSpec
 import com.trello.identifier.VERSION
-import com.trello.identifier.annotation.PackageId
 import groovy.util.XmlSlurper
+import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
 
@@ -69,28 +63,22 @@ class PackageIdentifierPlugin : Plugin<Project> {
   private fun configurePackageIdentifierGeneration(project: Project, variants: DomainObjectSet<out BaseVariant>) {
     val implDeps = project.configurations.getByName("implementation").dependencies
     implDeps.add(project.dependencies.create("com.trello.identifier:package-identifier-annotations:$VERSION"))
-    val compiler: PackageIdentifierCompiler = RealPackageIdentifierCompiler()
     variants.all { variant ->
       val once = AtomicBoolean()
-
-      if (once.compareAndSet(false, true)) {
-        val packageName = getPackageName(variant)
-        val taskName = "generate${variant.name.capitalize()}PackageInfo"
-        val task = project.tasks.create(taskName)
-        val outputDir = project.buildDir.resolve("generated/source/package-identifier/${variant.name}")
-        task.outputs.dir(outputDir)
-        variant.registerJavaGeneratingTask(task, outputDir)
-        variant.addJavaSourceFoldersToModel(outputDir)
-        if (!outputDir.exists()) {
-          outputDir.parentFile.mkdirs()
-          outputDir.createNewFile()
+      variant.outputs.all { output ->
+        if (once.compareAndSet(false, true)) {
+          val packageName = getPackageName(variant)
+          val outputDir = project.buildDir.resolve("generated/source/package-identifier/${variant.name}")
+          project.tasks.create("generate${variant.name.capitalize()}PackageInfo", PackageIdentifierGenerator::class.java)
+          {
+            it.outputDir = outputDir
+            it.className = "PackageIdentifier"
+            it.packageName = packageName
+            it.isDebuggable = variant.buildType.isDebuggable
+            variant.registerJavaGeneratingTask(it, outputDir)
+            variant.addJavaSourceFoldersToModel(outputDir)
+          }
         }
-
-        val outputFile = File(outputDir, "PackageIdentifier.kt")
-        if (!outputFile.exists()) {
-          outputFile.createNewFile()
-        }
-        task.apply { doLast { compiler.createPackageIdentifierFile(packageName, outputFile.writer(), variant.buildType.isDebuggable) } }
       }
     }
   }
