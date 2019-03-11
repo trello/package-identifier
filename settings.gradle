@@ -1,2 +1,3 @@
 include ':package-identifier-annotations'
 include ':package-identifier-plugin'
+include ':sample'

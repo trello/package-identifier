@@ -27,6 +27,10 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
+
+        // For Sample
+        classpath deps.android.gradlePlugin
+        classpath "com.trello.identifier:package-identifier:0.0.1"
     }
 
     allprojects {
