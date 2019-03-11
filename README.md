@@ -33,3 +33,22 @@ and another like this:
 Annotation processors can then use the enclosing package of the class annotated by `@PackageId` in order to generate files into module specific packages.
 Additionally, parsing the `isDebug` field allows you to handle debug variants differently from release variants.
 
+## Usage
+
+```groovy
+buildscript {
+  repositories {
+    mavenCentral()
+    google()
+   }
+  dependencies {
+    classpath 'com.trello.identifier:package-identifier:0.0.1'
+  }
+}
+```
+
+and then apply to your modules
+```groovy
+apply plugin: 'com.trello.identifier'
+
+```
