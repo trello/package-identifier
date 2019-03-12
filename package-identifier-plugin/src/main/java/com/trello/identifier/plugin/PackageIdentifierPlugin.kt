@@ -69,15 +69,18 @@ class PackageIdentifierPlugin : Plugin<Project> {
         if (once.compareAndSet(false, true)) {
           val packageName = getPackageName(variant)
           val outputDir = project.buildDir.resolve("generated/source/package-identifier/${variant.name}")
-          project.tasks.create("generate${variant.name.capitalize()}PackageInfo", PackageIdentifierGenerator::class.java)
-          {
-            it.outputDir = outputDir
-            it.className = "PackageIdentifier"
-            it.packageName = packageName
-            it.isDebuggable = variant.buildType.isDebuggable
-            variant.registerJavaGeneratingTask(it, outputDir)
-            variant.addJavaSourceFoldersToModel(outputDir)
-          }
+          val task = project.tasks
+              .create("generate${variant.name.capitalize()}PackageInfo", PackageIdentifierGenerator::class.java)
+              {
+                it.outputDir = outputDir
+                it.className = "PackageIdentifier"
+                it.packageName = packageName
+                it.isDebuggable = variant.buildType.isDebuggable
+                variant.registerJavaGeneratingTask(it, outputDir)
+                variant.addJavaSourceFoldersToModel(outputDir)
+              }
+
+          project.files().builtBy(task)
         }
       }
     }
