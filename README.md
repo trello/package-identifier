@@ -42,7 +42,7 @@ buildscript {
     google()
    }
   dependencies {
-    classpath 'com.trello.identifier:package-identifier:0.0.1'
+    classpath 'com.trello.identifier:package-identifier-plugin:0.0.2'
   }
 }
 ```
